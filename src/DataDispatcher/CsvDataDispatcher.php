@@ -37,15 +37,9 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
 
     public function send(array $data): void
     {
-        /** @var FileStorageInterface $storage */
-        $storage = $this->getFileStorage();
-        if (!$storage->fileExists($this->fileIdentifier)) {
-            $storage->createFile($this->fileIdentifier);
-        }
-        $filePath = $storage->getFileInfo($this->fileIdentifier, PATHINFO_ALL);
         try {
-            if ($csvFile = fopen($filePath, 'a')) {
-                if (filesize($filePath) == 0) {
+            if ($csvFile = fopen($this->fileIdentifier, 'a')) {
+                if (filesize($this->fileIdentifier) == 0) {
                     // Excel needs BOM to understand utf-8 encoding
                     fprintf($csvFile, chr(0xEF).chr(0xBB).chr(0xBF));
                     // Add Header row
@@ -55,8 +49,8 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
                 fputcsv($csvFile, array_values($data), $this->delimiter, $this->enclosure);
                 fclose($csvFile);
             } else {
-                if (!is_writable($filePath)) {
-                    $this->logger->error('CSV file is not writeable on: ' . $filePath);
+                if (!is_writable($this->fileIdentifier)) {
+                    $this->logger->error('CSV file is not writeable on: ' . $this->fileIdentifier);
                 }
                 $this->logger->error('Error writing CSV file on: ' . error_get_last());
             }
