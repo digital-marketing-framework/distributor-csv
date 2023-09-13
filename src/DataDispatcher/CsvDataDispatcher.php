@@ -34,9 +34,10 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
     {
         try {
             $csvString = $this->fileStorage->getFileContents($this->fileIdentifier);
-
+            if (!$csvString) {
+                $csvString = '';
+            }
             $outputString = $this->parseCsv($csvString, $data);
-
             $this->fileStorage->putFileContents($this->fileIdentifier, $outputString);
         }
         catch (\Exception $e) {
@@ -70,10 +71,10 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
         $headers = array_unique($headers);
 
         // Prepare the CSV header row
-        $headerRow = implode($this->delimiter, $headers);
+        $headerRow = $this->makeCsvLine($headers);
 
         // Initialize a string variable to store the result
-        $outputString = $headerRow . PHP_EOL;
+        $outputString = $headerRow;
 
         // Prepare and append the data rows
         foreach ($finalArray as $item) {
@@ -81,8 +82,32 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
             foreach ($headers as $header) {
                 $rowData[] = $item[$header] ?? '';
             }
-            $outputString .= implode($this->delimiter, $rowData) . PHP_EOL;
+            $outputString .= $this->makeCsvLine($rowData);
         }
         return $outputString;
+    }
+
+    /**
+     * If a value contains delimiter or an enclousure, a newline, or a linefeed,
+     * then surround it with quotes and replace any quotes inside it with two quotes
+     * @param array<mixed> $values
+     */
+    protected function makeCsvLine(array $values)
+    {
+        // iterate through the array ele by ele.
+        foreach($values as $key => $value)
+        {
+            // check for presence of special char.
+            if ((strpos($value, $this->delimiter)  !== false) ||
+                (strpos($value, $this->enclosure)  !== false) ||
+                (strpos($value, "\n") !== false) ||
+                (strpos($value, "\r") !== false))
+            {
+                $values[$key] = $this->enclosure . str_replace($this->enclosure, $this->enclosure.$this->enclosure, $value) . $this->enclosure;
+            }
+        }
+
+        // now create the CSV line by joining with delimiter
+        return implode($this->delimiter, $values) . PHP_EOL;
     }
 }
