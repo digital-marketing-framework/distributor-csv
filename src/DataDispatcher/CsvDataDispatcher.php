@@ -5,12 +5,7 @@ namespace DigitalMarketingFramework\Distributor\Csv\DataDispatcher;
 use DigitalMarketingFramework\Core\Exception\DigitalMarketingFrameworkException;
 use DigitalMarketingFramework\Core\FileStorage\FileStorageAwareInterface;
 use DigitalMarketingFramework\Core\FileStorage\FileStorageAwareTrait;
-use DigitalMarketingFramework\Core\FileStorage\FileStorageInterface;
 use DigitalMarketingFramework\Distributor\Core\DataDispatcher\DataDispatcher;
-
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-use function Symfony\Component\String\s;
 
 class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInterface, FileStorageAwareInterface
 {
