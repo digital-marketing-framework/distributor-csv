@@ -38,25 +38,56 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
     public function send(array $data): void
     {
         try {
-            if ($csvFile = fopen($this->fileIdentifier, 'a')) {
-                if (filesize($this->fileIdentifier) == 0) {
-                    // Excel needs BOM to understand utf-8 encoding
-                    fprintf($csvFile, chr(0xEF).chr(0xBB).chr(0xBF));
-                    // Add Header row
-                    fputcsv($csvFile, array_keys($data), $this->delimiter, $this->enclosure);
-                }
-                // Add content row
-                fputcsv($csvFile, array_values($data), $this->delimiter, $this->enclosure);
-                fclose($csvFile);
-            } else {
-                if (!is_writable($this->fileIdentifier)) {
-                    $this->logger->error('CSV file is not writeable on: ' . $this->fileIdentifier);
-                }
-                $this->logger->error('Error writing CSV file on: ' . error_get_last());
-            }
+            $csvString = $this->fileStorage->getFileContents($this->fileIdentifier);
+
+            $outputString = $this->parseCsv($csvString, $data);
+
+            $this->fileStorage->putFileContents($this->fileIdentifier, $outputString);
         }
         catch (\Exception $e) {
             throw new DigitalMarketingFrameworkException($e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    /**
+     * @param string $csvString
+     * @param array<mixed> $data
+     * @return string
+     */
+    protected function parseCsv(string $csvString, array $data): string {
+        // Parse the CSV string into an array
+        $csvArray = [];
+        $lines = explode(PHP_EOL, $csvString);
+        $header = str_getcsv(array_shift($lines), $this->delimiter, $this->enclosure);
+        foreach ($lines as $line) {
+            $values = str_getcsv($line, $this->delimiter);
+            if ($values[0]) {
+                $csvArray[] = array_combine($header, $values);
+            }
+        }
+        $finalArray = array_merge($csvArray, [$data]);
+
+        // Get the headers in the order they appear
+        $headers = [];
+        foreach ($finalArray as $item) {
+            $headers = array_merge($headers, array_keys($item));
+        }
+        $headers = array_unique($headers);
+
+        // Prepare the CSV header row
+        $headerRow = implode($this->delimiter, $headers);
+
+        // Initialize a string variable to store the result
+        $outputString = $headerRow . PHP_EOL;
+
+        // Prepare and append the data rows
+        foreach ($finalArray as $item) {
+            $rowData = [];
+            foreach ($headers as $header) {
+                $rowData[] = $item[$header] ?? '';
+            }
+            $outputString .= implode($this->delimiter, $rowData) . PHP_EOL;
+        }
+        return $outputString;
     }
 }
