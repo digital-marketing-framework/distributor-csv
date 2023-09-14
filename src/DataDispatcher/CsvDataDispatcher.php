@@ -67,7 +67,7 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
         }
         $newHeader = $this->makeCsvLine($headers);
         if (!empty($csvString)) {
-            $csvString = str_replace($firstLine, $newHeader, $csvString);
+            $csvString = substr_replace($csvString, $newHeader, 0, strlen($firstLine));
         } else {
             $csvString = $newHeader;
         }
