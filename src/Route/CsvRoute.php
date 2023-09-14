@@ -3,12 +3,11 @@
 namespace DigitalMarketingFramework\Distributor\Csv\Route;
 
 use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\ContainerSchema;
+use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\SchemaInterface;
 use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\StringSchema;
 use DigitalMarketingFramework\Distributor\Core\DataDispatcher\DataDispatcherInterface;
 use DigitalMarketingFramework\Distributor\Core\Route\Route;
 use DigitalMarketingFramework\Distributor\Csv\DataDispatcher\CsvDataDispatcherInterface;
-use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\SchemaInterface;
-
 
 class CsvRoute extends Route
 {
@@ -25,7 +24,6 @@ class CsvRoute extends Route
     protected const DEFAULT_VALUE_DELIMITER = ';';
     protected const KEY_VALUE_ENCLOSURE = 'enclosure';
     protected const DEFAULT_VALUE_ENCLOSURE = '"';
-
 
     protected function getDispatcherKeyword(): string
     {

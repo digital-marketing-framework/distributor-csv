@@ -30,4 +30,3 @@ class DistributorCsvInitialization extends Initialization
         parent::__construct('distributor-csv', '1.0.0');
     }
 }
-

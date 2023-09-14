@@ -41,8 +41,7 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
             echo 'START2';
             echo $outputString;
             $this->fileStorage->putFileContents($this->fileIdentifier, $outputString);
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw new DigitalMarketingFrameworkException($e->getMessage(), $e->getCode(), $e);
         }
     }
@@ -55,7 +54,7 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
         $headers = [];
         $firstLine = '';
         if (!empty($csvString)) {
-            $firstLine = substr($csvString, 0, strpos($csvString, PHP_EOL)). "\n";
+            $firstLine = substr($csvString, 0, strpos($csvString, PHP_EOL)) . "\n";
             $headers = str_getcsv($firstLine, $this->delimiter, $this->enclosure);
         }
 
@@ -87,16 +86,13 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
     protected function makeCsvLine(array $values): string
     {
         // iterate through the array ele by ele.
-        foreach($values as $key => $value)
-        {
+        foreach ($values as $key => $value) {
             // check for presence of special char.
-            if ((strpos($value, $this->delimiter)  !== false) ||
-                (strpos($value, $this->enclosure)  !== false) ||
-                (strpos($value, "\n") !== false) ||
-                (strpos($value, "\r") !== false))
-            {
-
-                $values[$key] = $this->enclosure . str_replace([$this->enclosure], $this->enclosure.$this->enclosure, $value) . $this->enclosure;
+            if ((str_contains((string)$value, $this->delimiter)) ||
+                (str_contains((string)$value, $this->enclosure)) ||
+                (str_contains((string)$value, "\n")) ||
+                (str_contains((string)$value, "\r"))) {
+                $values[$key] = $this->enclosure . str_replace([$this->enclosure], $this->enclosure . $this->enclosure, (string)$value) . $this->enclosure;
             }
         }
 

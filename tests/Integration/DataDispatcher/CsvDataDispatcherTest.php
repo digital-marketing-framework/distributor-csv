@@ -1,8 +1,8 @@
 <?php
 
 use DigitalMarketingFramework\Core\FileStorage\FileStorageInterface;
-use PHPUnit\Framework\TestCase;
 use DigitalMarketingFramework\Distributor\Csv\DataDispatcher\CsvDataDispatcher;
+use PHPUnit\Framework\TestCase;
 
 class CsvDataDispatcherTest extends TestCase
 {
@@ -26,7 +26,7 @@ class CsvDataDispatcherTest extends TestCase
         // Simulate file existence and content
         $fileStorageMock = $this->getMockBuilder(FileStorageInterface::class)->getMock();
         $fileStorageMock->method('getFileContents')->willReturn($existingCsvContent);
-        $fileStorageMock->expects($this->once())->method('putFileContents')->with($fileIdentifier, $expectedCsvContent);
+        $fileStorageMock->expects(self::once())->method('putFileContents')->with($fileIdentifier, $expectedCsvContent);
 
         // Set the file storage for the CsvDataDispatcher instance
         $csvDataDispatcher->setFileStorage($fileStorageMock);
@@ -62,10 +62,10 @@ class CsvDataDispatcherTest extends TestCase
     }
 
     /** Helper to test protected and private methods */
-    protected static function getMethod(string $name) {
+    protected static function getMethod(string $name)
+    {
         $class = new ReflectionClass(CsvDataDispatcher::class);
         $method = $class->getMethod($name);
         return $method;
     }
-
 }
