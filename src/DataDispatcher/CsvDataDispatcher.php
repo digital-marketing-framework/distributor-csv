@@ -38,6 +38,8 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
                 $csvString = '';
             }
             $outputString = $this->parseCsv($csvString, $data);
+            echo 'START2';
+            echo $outputString;
             $this->fileStorage->putFileContents($this->fileIdentifier, $outputString);
         }
         catch (\Exception $e) {
@@ -46,45 +48,35 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
     }
 
     /**
-     * @param string $csvString
      * @param array<mixed> $data
-     * @return string
      */
-    protected function parseCsv(string $csvString, array $data): string {
-        // Parse the CSV string into an array
-        $csvArray = [];
-        $lines = explode(PHP_EOL, $csvString);
-        $header = str_getcsv(array_shift($lines), $this->delimiter, $this->enclosure);
-        foreach ($lines as $line) {
-            $values = str_getcsv($line, $this->delimiter);
-            if ($values[0]) {
-                $csvArray[] = array_combine($header, $values);
-            }
-        }
-        $finalArray = array_merge($csvArray, [$data]);
-
-        // Get the headers in the order they appear
+    protected function parseCsv(string $csvString, array $data): string
+    {
         $headers = [];
-        foreach ($finalArray as $item) {
-            $headers = array_merge($headers, array_keys($item));
+        $firstLine = '';
+        if (!empty($csvString)) {
+            $firstLine = substr($csvString, 0, strpos($csvString, PHP_EOL)). "\n";
+            $headers = str_getcsv($firstLine, $this->delimiter, $this->enclosure);
         }
-        $headers = array_unique($headers);
 
-        // Prepare the CSV header row
-        $headerRow = $this->makeCsvLine($headers);
-
-        // Initialize a string variable to store the result
-        $outputString = $headerRow;
-
-        // Prepare and append the data rows
-        foreach ($finalArray as $item) {
-            $rowData = [];
-            foreach ($headers as $header) {
-                $rowData[] = $item[$header] ?? '';
+        $newData = [];
+        foreach ($data as $key => $value) {
+            if (!in_array($key, $headers)) {
+                $headers[] = $key;
             }
-            $outputString .= $this->makeCsvLine($rowData);
         }
-        return $outputString;
+        foreach ($headers as $header) {
+            $newData[$header] = !empty($data[$header]) ? $data[$header] : '';
+        }
+        $newHeader = $this->makeCsvLine($headers);
+        if (!empty($csvString)) {
+            $csvString = str_replace($firstLine, $newHeader, $csvString);
+        } else {
+            $csvString = $newHeader;
+        }
+        $newData = $this->makeCsvLine($newData);
+        $csvString .= $newData;
+        return $csvString;
     }
 
     /**
@@ -92,7 +84,7 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
      * then surround it with quotes and replace any quotes inside it with two quotes
      * @param array<mixed> $values
      */
-    protected function makeCsvLine(array $values)
+    protected function makeCsvLine(array $values): string
     {
         // iterate through the array ele by ele.
         foreach($values as $key => $value)
@@ -103,7 +95,8 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
                 (strpos($value, "\n") !== false) ||
                 (strpos($value, "\r") !== false))
             {
-                $values[$key] = $this->enclosure . str_replace($this->enclosure, $this->enclosure.$this->enclosure, $value) . $this->enclosure;
+
+                $values[$key] = $this->enclosure . str_replace([$this->enclosure], $this->enclosure.$this->enclosure, $value) . $this->enclosure;
             }
         }
 
