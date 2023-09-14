@@ -38,8 +38,6 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
                 $csvString = '';
             }
             $outputString = $this->parseCsv($csvString, $data);
-            echo 'START2';
-            echo $outputString;
             $this->fileStorage->putFileContents($this->fileIdentifier, $outputString);
         } catch (\Exception $e) {
             throw new DigitalMarketingFrameworkException($e->getMessage(), $e->getCode(), $e);

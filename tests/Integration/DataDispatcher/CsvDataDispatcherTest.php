@@ -31,10 +31,6 @@ class CsvDataDispatcherTest extends TestCase
         // Set the file storage for the CsvDataDispatcher instance
         $csvDataDispatcher->setFileStorage($fileStorageMock);
 
-        echo 'START';
-        print_r($data);
-        echo $expectedCsvContent;
-
         // Call the send method to update the CSV data
         $csvDataDispatcher->send($data);
     }
