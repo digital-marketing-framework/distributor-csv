@@ -16,7 +16,7 @@ class CsvDataDispatcherTest extends TestCase
      *
      * @param array<string,string|ValueInterface> $data
      */
-    public function testSendMethod(string|null $existingCsvContent = '', array $data = [], string $expectedCsvContent = '')
+    public function testSendMethod(string|null $existingCsvContent = '', array $data = [], string $expectedCsvContent = ''): void
     {
         $registryMock = $this->getMockBuilder(Registry::class)->getMock();
 
@@ -43,7 +43,10 @@ class CsvDataDispatcherTest extends TestCase
         $csvDataDispatcher->send($data);
     }
 
-    public function csvDataProvider()
+    /**
+     * @return array<mixed>
+     */
+    public function csvDataProvider(): array
     {
         return [
             'Test when file doesnt exist, expect new CSV file with headers and data' => [null, ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => 'johndoe@example.com'], "Name;Last Name;Email\nJohn;Doe;johndoe@example.com\n"],
