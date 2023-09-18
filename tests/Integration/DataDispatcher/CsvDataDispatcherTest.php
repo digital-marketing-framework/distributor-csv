@@ -1,36 +1,24 @@
 <?php
 
 use DigitalMarketingFramework\Core\FileStorage\FileStorageInterface;
-use DigitalMarketingFramework\Core\Registry\RegistryDomain;
+use DigitalMarketingFramework\Core\Model\Data\Value\ValueInterface;
 use DigitalMarketingFramework\Distributor\Core\Tests\Integration\DistributorRegistryTestTrait;
 use DigitalMarketingFramework\Distributor\Csv\DataDispatcher\CsvDataDispatcher;
-use DigitalMarketingFramework\Distributor\Csv\DistributorCsvInitialization;
-use DigitalMarketingFramework\Distributor\Csv\Route\CsvRoute;
 use PHPUnit\Framework\TestCase;
 
 class CsvDataDispatcherTest extends TestCase
 {
     use DistributorRegistryTestTrait;
 
-    protected CsvRoute $subject;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->initRegistry();
-        $initialization = new DistributorCsvInitialization();
-        $initialization->init(RegistryDomain::CORE, $this->registry);
-        $initialization->init(RegistryDomain::DISTRIBUTOR, $this->registry);
-    }
-
     /**
      * @dataProvider csvDataProvider
-     * @param array<mixed> $data
+     * @param array<string,string|ValueInterface> $data
      */
     public function testSendMethod(string|null $existingCsvContent = '', array $data = [], string $expectedCsvContent = '')
     {
-        $csvDataDispatcher = new CsvDataDispatcher('csv', $this->registry);
+        $registryMock = $this->getMockBuilder(DigitalMarketingFramework\Distributor\Core\Registry\Registry::class)->getMock();
+
+        $csvDataDispatcher = new CsvDataDispatcher('csv', $registryMock);
 
         // Set up some test data
         $fileIdentifier = 'test.csv';

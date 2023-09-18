@@ -5,6 +5,7 @@ namespace DigitalMarketingFramework\Distributor\Csv\DataDispatcher;
 use DigitalMarketingFramework\Core\Exception\DigitalMarketingFrameworkException;
 use DigitalMarketingFramework\Core\FileStorage\FileStorageAwareInterface;
 use DigitalMarketingFramework\Core\FileStorage\FileStorageAwareTrait;
+use DigitalMarketingFramework\Core\Model\Data\Value\ValueInterface;
 use DigitalMarketingFramework\Distributor\Core\DataDispatcher\DataDispatcher;
 
 class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInterface, FileStorageAwareInterface
@@ -30,6 +31,11 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
         $this->enclosure = $enclosure;
     }
 
+    /**
+     * @param array<string,string|ValueInterface> $data
+     * @return void
+     * @throws DigitalMarketingFrameworkException
+     */
     public function send(array $data): void
     {
         try {
