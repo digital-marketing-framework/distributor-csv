@@ -1,8 +1,8 @@
 <?php
 
-use DigitalMarketingFramework\Distributor\Core\Registry\Registry;
 use DigitalMarketingFramework\Core\FileStorage\FileStorageInterface;
 use DigitalMarketingFramework\Core\Model\Data\Value\ValueInterface;
+use DigitalMarketingFramework\Distributor\Core\Registry\Registry;
 use DigitalMarketingFramework\Distributor\Core\Tests\Integration\DistributorRegistryTestTrait;
 use DigitalMarketingFramework\Distributor\Csv\DataDispatcher\CsvDataDispatcher;
 use PHPUnit\Framework\TestCase;
