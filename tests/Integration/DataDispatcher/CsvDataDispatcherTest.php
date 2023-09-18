@@ -56,12 +56,4 @@ class CsvDataDispatcherTest extends TestCase
                 ["Name;Email;Age\n\"\"\"Alice\"\"\";\"\"\"alice@example.com\"\"\";\"\"\"25\"\"\"\nBob;bob@example.com;32\n", ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => 'johndoe@example.com'], "Name;Email;Age;Last Name\n\"\"\"Alice\"\"\";\"\"\"alice@example.com\"\"\";\"\"\"25\"\"\"\nBob;bob@example.com;32\nJohn;johndoe@example.com;;Doe\n"],
         ];
     }
-
-    /** Helper to test protected and private methods */
-    protected static function getMethod(string $name)
-    {
-        $class = new ReflectionClass(CsvDataDispatcher::class);
-        $method = $class->getMethod($name);
-        return $method;
-    }
 }
