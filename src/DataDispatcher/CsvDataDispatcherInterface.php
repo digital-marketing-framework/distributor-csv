@@ -7,6 +7,8 @@ use DigitalMarketingFramework\Distributor\Core\DataDispatcher\DataDispatcherInte
 interface CsvDataDispatcherInterface extends DataDispatcherInterface
 {
     public function setFileIdentifier(string $fileIdentifier): void;
+
     public function setDelimiter(string $delimiter): void;
+
     public function setEnclosure(string $enclosure): void;
 }

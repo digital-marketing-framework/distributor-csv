@@ -19,10 +19,15 @@ class CsvRoute extends Route
      * enclosure:"
      */
     protected const KEY_FILE_IDENTIFIER = 'fileIdentifier';
+
     protected const DEFAULT_FILE_IDENTIFIER = 'form-submits.csv';
+
     protected const KEY_VALUE_DELIMITER = 'delimiter';
+
     protected const DEFAULT_VALUE_DELIMITER = ';';
+
     protected const KEY_VALUE_ENCLOSURE = 'enclosure';
+
     protected const DEFAULT_VALUE_ENCLOSURE = '"';
 
     protected function getDispatcherKeyword(): string
@@ -37,6 +42,7 @@ class CsvRoute extends Route
         $dispatcher->setFileIdentifier($this->getConfig(static::KEY_FILE_IDENTIFIER));
         $dispatcher->setDelimiter($this->getConfig(static::KEY_VALUE_DELIMITER));
         $dispatcher->setEnclosure($this->getConfig(static::KEY_VALUE_ENCLOSURE));
+
         return $dispatcher;
     }
 

@@ -7,13 +7,16 @@ use DigitalMarketingFramework\Core\FileStorage\FileStorageAwareInterface;
 use DigitalMarketingFramework\Core\FileStorage\FileStorageAwareTrait;
 use DigitalMarketingFramework\Core\Model\Data\Value\ValueInterface;
 use DigitalMarketingFramework\Distributor\Core\DataDispatcher\DataDispatcher;
+use Exception;
 
 class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInterface, FileStorageAwareInterface
 {
     use FileStorageAwareTrait;
 
     private string $fileIdentifier;
+
     private string $delimiter;
+
     private string $enclosure;
 
     public function setFileIdentifier(string $fileIdentifier): void
@@ -33,7 +36,9 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
 
     /**
      * @param array<string,string|ValueInterface> $data
+     *
      * @return void
+     *
      * @throws DigitalMarketingFrameworkException
      */
     public function send(array $data): void
@@ -43,9 +48,10 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
             if (!$csvString) {
                 $csvString = '';
             }
+
             $outputString = $this->parseCsv($csvString, $data);
             $this->fileStorage->putFileContents($this->fileIdentifier, $outputString);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new DigitalMarketingFrameworkException($e->getMessage(), $e->getCode(), $e);
         }
     }
@@ -57,34 +63,34 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
     {
         $headers = [];
         $firstLine = '';
-        if (!empty($csvString)) {
-            $firstLine = substr($csvString, 0, strpos($csvString, PHP_EOL)) . "\n";
+        if ($csvString !== '') {
+            $firstLine = substr($csvString, 0, strpos($csvString, PHP_EOL))."\n";
             $headers = str_getcsv($firstLine, $this->delimiter, $this->enclosure);
         }
 
         $newData = [];
-        foreach ($data as $key => $value) {
+        foreach (array_keys($data) as $key) {
             if (!in_array($key, $headers)) {
                 $headers[] = $key;
             }
         }
+
         foreach ($headers as $header) {
-            $newData[$header] = !empty($data[$header]) ? $data[$header] : '';
+            $newData[$header] = empty($data[$header]) ? '' : $data[$header];
         }
+
         $newHeader = $this->makeCsvLine($headers);
-        if (!empty($csvString)) {
-            $csvString = substr_replace($csvString, $newHeader, 0, strlen($firstLine));
-        } else {
-            $csvString = $newHeader;
-        }
+        $csvString = $csvString === '' ? $newHeader : substr_replace($csvString, $newHeader, 0, strlen($firstLine));
+
         $newData = $this->makeCsvLine($newData);
-        $csvString .= $newData;
-        return $csvString;
+
+        return $csvString . $newData;
     }
 
     /**
      * If a value contains delimiter or an enclousure, a newline, or a linefeed,
      * then surround it with quotes and replace any quotes inside it with two quotes
+     *
      * @param array<mixed> $values
      */
     protected function makeCsvLine(array $values): string
@@ -92,15 +98,15 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
         // iterate through the array ele by ele.
         foreach ($values as $key => $value) {
             // check for presence of special char.
-            if ((str_contains((string)$value, $this->delimiter)) ||
-                (str_contains((string)$value, $this->enclosure)) ||
-                (str_contains((string)$value, "\n")) ||
-                (str_contains((string)$value, "\r"))) {
-                $values[$key] = $this->enclosure . str_replace([$this->enclosure], $this->enclosure . $this->enclosure, (string)$value) . $this->enclosure;
+            if (str_contains((string) $value, $this->delimiter)
+                || str_contains((string) $value, $this->enclosure)
+                || str_contains((string) $value, "\n")
+                || str_contains((string) $value, "\r")) {
+                $values[$key] = $this->enclosure.str_replace([$this->enclosure], $this->enclosure.$this->enclosure, (string) $value).$this->enclosure;
             }
         }
 
         // now create the CSV line by joining with delimiter
-        return implode($this->delimiter, $values) . PHP_EOL;
+        return implode($this->delimiter, $values).PHP_EOL;
     }
 }

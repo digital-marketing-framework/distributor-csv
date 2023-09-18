@@ -13,7 +13,6 @@ class DistributorCsvInitialization extends Initialization
 {
     protected const PLUGINS = [
         RegistryDomain::DISTRIBUTOR => [
-
             DataDispatcherInterface::class => [
             CsvDataDispatcher::class,
             ],

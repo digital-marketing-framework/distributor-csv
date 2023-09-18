@@ -1,5 +1,6 @@
 <?php
 
+use DigitalMarketingFramework\Distributor\Core\Registry\Registry;
 use DigitalMarketingFramework\Core\FileStorage\FileStorageInterface;
 use DigitalMarketingFramework\Core\Model\Data\Value\ValueInterface;
 use DigitalMarketingFramework\Distributor\Core\Tests\Integration\DistributorRegistryTestTrait;
@@ -12,11 +13,12 @@ class CsvDataDispatcherTest extends TestCase
 
     /**
      * @dataProvider csvDataProvider
+     *
      * @param array<string,string|ValueInterface> $data
      */
     public function testSendMethod(string|null $existingCsvContent = '', array $data = [], string $expectedCsvContent = '')
     {
-        $registryMock = $this->getMockBuilder(DigitalMarketingFramework\Distributor\Core\Registry\Registry::class)->getMock();
+        $registryMock = $this->getMockBuilder(Registry::class)->getMock();
 
         $csvDataDispatcher = new CsvDataDispatcher('csv', $registryMock);
 
@@ -44,22 +46,16 @@ class CsvDataDispatcherTest extends TestCase
     public function csvDataProvider()
     {
         return [
-            'Test when file doesnt exist, expect new CSV file with headers and data' =>
-                [null, ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => 'johndoe@example.com'], "Name;Last Name;Email\nJohn;Doe;johndoe@example.com\n"],
-            'Test when file is empty, expect new headers and data' =>
-                ['', ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => 'johndoe@example.com'], "Name;Last Name;Email\nJohn;Doe;johndoe@example.com\n"],
+            'Test when file doesnt exist, expect new CSV file with headers and data' => [null, ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => 'johndoe@example.com'], "Name;Last Name;Email\nJohn;Doe;johndoe@example.com\n"],
+            'Test when file is empty, expect new headers and data' => ['', ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => 'johndoe@example.com'], "Name;Last Name;Email\nJohn;Doe;johndoe@example.com\n"],
 
-            'If a value contains line-break then surround it with quotes and replace linebreaks with PHP_EOL' =>
-                ['', ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => "john\ndoe@example.com"], "Name;Last Name;Email\nJohn;Doe;\"john\ndoe@example.com\"\n"],
+            'If a value contains line-break then surround it with quotes and replace linebreaks with PHP_EOL' => ['', ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => "john\ndoe@example.com"], "Name;Last Name;Email\nJohn;Doe;\"john\ndoe@example.com\"\n"],
 
-            'If a value contains delimiter or enclosure then surround it with quotes' =>
-                ['', ['Name' => 'Jo;hn', 'Last Name' => '"Doe"', 'Email' => '"john;doe@example.com"'], "Name;Last Name;Email\n\"Jo;hn\";\"\"\"Doe\"\"\";\"\"\"john;doe@example.com\"\"\"\n"],
+            'If a value contains delimiter or enclosure then surround it with quotes' => ['', ['Name' => 'Jo;hn', 'Last Name' => '"Doe"', 'Email' => '"john;doe@example.com"'], "Name;Last Name;Email\n\"Jo;hn\";\"\"\"Doe\"\"\";\"\"\"john;doe@example.com\"\"\"\n"],
 
-            'Test when file exists, expect data appended to existing CSV' =>
-                ["Name;Email;Age\nAlice;alice@example.com;25\nBob;bob@example.com;32\n", ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => 'johndoe@example.com'], "Name;Email;Age;Last Name\nAlice;alice@example.com;25\nBob;bob@example.com;32\nJohn;johndoe@example.com;;Doe\n"],
+            'Test when file exists, expect data appended to existing CSV' => ["Name;Email;Age\nAlice;alice@example.com;25\nBob;bob@example.com;32\n", ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => 'johndoe@example.com'], "Name;Email;Age;Last Name\nAlice;alice@example.com;25\nBob;bob@example.com;32\nJohn;johndoe@example.com;;Doe\n"],
 
-            'Test when file exists, and existing CSV contains double quotes' =>
-                ["Name;Email;Age\n\"\"\"Alice\"\"\";\"\"\"alice@example.com\"\"\";\"\"\"25\"\"\"\nBob;bob@example.com;32\n", ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => 'johndoe@example.com'], "Name;Email;Age;Last Name\n\"\"\"Alice\"\"\";\"\"\"alice@example.com\"\"\";\"\"\"25\"\"\"\nBob;bob@example.com;32\nJohn;johndoe@example.com;;Doe\n"],
+            'Test when file exists, and existing CSV contains double quotes' => ["Name;Email;Age\n\"\"\"Alice\"\"\";\"\"\"alice@example.com\"\"\";\"\"\"25\"\"\"\nBob;bob@example.com;32\n", ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => 'johndoe@example.com'], "Name;Email;Age;Last Name\n\"\"\"Alice\"\"\";\"\"\"alice@example.com\"\"\";\"\"\"25\"\"\"\nBob;bob@example.com;32\nJohn;johndoe@example.com;;Doe\n"],
         ];
     }
 }
