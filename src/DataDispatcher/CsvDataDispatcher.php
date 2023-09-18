@@ -84,7 +84,7 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
 
         $newData = $this->makeCsvLine($newData);
 
-        return $csvString . $newData;
+        return $csvString.$newData;
     }
 
     /**
