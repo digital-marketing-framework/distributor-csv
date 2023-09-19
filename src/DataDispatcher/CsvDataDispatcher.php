@@ -64,7 +64,7 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
         $headers = [];
         $firstLine = '';
         if ($csvString !== '') {
-            $firstLine = substr($csvString, 0, strpos($csvString, PHP_EOL))."\n";
+            $firstLine = substr($csvString, 0, strpos($csvString, PHP_EOL)) . "\n";
             $headers = str_getcsv($firstLine, $this->delimiter, $this->enclosure);
         }
 
@@ -84,7 +84,7 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
 
         $newData = $this->makeCsvLine($newData);
 
-        return $csvString.$newData;
+        return $csvString . $newData;
     }
 
     /**
@@ -102,11 +102,11 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
                 || str_contains((string) $value, $this->enclosure)
                 || str_contains((string) $value, "\n")
                 || str_contains((string) $value, "\r")) {
-                $values[$key] = $this->enclosure.str_replace([$this->enclosure], $this->enclosure.$this->enclosure, (string) $value).$this->enclosure;
+                $values[$key] = $this->enclosure . str_replace([$this->enclosure], $this->enclosure . $this->enclosure, (string) $value) . $this->enclosure;
             }
         }
 
         // now create the CSV line by joining with delimiter
-        return implode($this->delimiter, $values).PHP_EOL;
+        return implode($this->delimiter, $values) . PHP_EOL;
     }
 }
