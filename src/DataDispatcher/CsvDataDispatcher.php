@@ -98,11 +98,11 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
         // iterate through the array ele by ele.
         foreach ($values as $key => $value) {
             // check for presence of special char.
-            if (str_contains((string) $value, $this->delimiter)
-                || str_contains((string) $value, $this->enclosure)
-                || str_contains((string) $value, "\n")
-                || str_contains((string) $value, "\r")) {
-                $values[$key] = $this->enclosure . str_replace([$this->enclosure], $this->enclosure . $this->enclosure, (string) $value) . $this->enclosure;
+            if (str_contains((string)$value, $this->delimiter)
+                || str_contains((string)$value, $this->enclosure)
+                || str_contains((string)$value, "\n")
+                || str_contains((string)$value, "\r")) {
+                $values[$key] = $this->enclosure . str_replace([$this->enclosure], $this->enclosure . $this->enclosure, (string)$value) . $this->enclosure;
             }
         }
 
