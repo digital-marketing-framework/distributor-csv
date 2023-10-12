@@ -34,21 +34,10 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
         $this->enclosure = $enclosure;
     }
 
-    /**
-     * @param array<string,string|ValueInterface> $data
-     *
-     * @return void
-     *
-     * @throws DigitalMarketingFrameworkException
-     */
     public function send(array $data): void
     {
         try {
-            $csvString = $this->fileStorage->getFileContents($this->fileIdentifier);
-            if (!$csvString) {
-                $csvString = '';
-            }
-
+            $csvString = $this->fileStorage->getFileContents($this->fileIdentifier) ?? '';
             $outputString = $this->parseCsv($csvString, $data);
             $this->fileStorage->putFileContents($this->fileIdentifier, $outputString);
         } catch (Exception $e) {
@@ -57,7 +46,7 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
     }
 
     /**
-     * @param array<mixed> $data
+     * @param array<string,string|ValueInterface> $data
      */
     protected function parseCsv(string $csvString, array $data): string
     {
@@ -76,7 +65,7 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
         }
 
         foreach ($headers as $header) {
-            $newData[$header] = empty($data[$header]) ? '' : $data[$header];
+            $newData[$header] = empty($data[$header]) ? '' : (string)$data[$header];
         }
 
         $newHeader = $this->makeCsvLine($headers);
@@ -91,18 +80,18 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
      * If a value contains delimiter or an enclousure, a newline, or a linefeed,
      * then surround it with quotes and replace any quotes inside it with two quotes
      *
-     * @param array<mixed> $values
+     * @param array<string> $values
      */
     protected function makeCsvLine(array $values): string
     {
         // iterate through the array ele by ele.
         foreach ($values as $key => $value) {
             // check for presence of special char.
-            if (str_contains((string)$value, $this->delimiter)
-                || str_contains((string)$value, $this->enclosure)
-                || str_contains((string)$value, "\n")
-                || str_contains((string)$value, "\r")) {
-                $values[$key] = $this->enclosure . str_replace([$this->enclosure], $this->enclosure . $this->enclosure, (string)$value) . $this->enclosure;
+            if (str_contains($value, $this->delimiter)
+                || str_contains($value, $this->enclosure)
+                || str_contains($value, "\n")
+                || str_contains($value, "\r")) {
+                $values[$key] = $this->enclosure . str_replace($this->enclosure, $this->enclosure . $this->enclosure, $value) . $this->enclosure;
             }
         }
 
