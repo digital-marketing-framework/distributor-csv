@@ -2,14 +2,14 @@
 
 namespace DigitalMarketingFramework\Distributor\Csv\Route;
 
-use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\ContainerSchema;
-use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\SchemaInterface;
-use DigitalMarketingFramework\Core\ConfigurationDocument\SchemaDocument\Schema\StringSchema;
+use DigitalMarketingFramework\Core\SchemaDocument\Schema\ContainerSchema;
+use DigitalMarketingFramework\Core\SchemaDocument\Schema\SchemaInterface;
+use DigitalMarketingFramework\Core\SchemaDocument\Schema\StringSchema;
 use DigitalMarketingFramework\Distributor\Core\DataDispatcher\DataDispatcherInterface;
-use DigitalMarketingFramework\Distributor\Core\Route\Route;
+use DigitalMarketingFramework\Distributor\Core\Route\OutboundRoute;
 use DigitalMarketingFramework\Distributor\Csv\DataDispatcher\CsvDataDispatcherInterface;
 
-class CsvRoute extends Route
+class CsvOutboundRoute extends OutboundRoute
 {
     /*
      * example configurations
@@ -29,6 +29,26 @@ class CsvRoute extends Route
     protected const KEY_VALUE_ENCLOSURE = 'enclosure';
 
     protected const DEFAULT_VALUE_ENCLOSURE = '"';
+
+    public static function getIntegrationName(): string
+    {
+        return 'file';
+    }
+
+    public static function getIntegrationLabel(): ?string
+    {
+        return 'File';
+    }
+
+    public static function getOutboundRouteListLabel(): ?string
+    {
+        return 'File Routes';
+    }
+
+    public static function getLabel(): ?string
+    {
+        return 'CSV';
+    }
 
     protected function getDispatcherKeyword(): string
     {
