@@ -2,6 +2,7 @@
 
 namespace DigitalMarketingFramework\Distributor\Csv\Route;
 
+use DigitalMarketingFramework\Core\Integration\IntegrationInfo;
 use DigitalMarketingFramework\Core\SchemaDocument\Schema\ContainerSchema;
 use DigitalMarketingFramework\Core\SchemaDocument\Schema\SchemaInterface;
 use DigitalMarketingFramework\Core\SchemaDocument\Schema\StringSchema;
@@ -30,19 +31,9 @@ class CsvOutboundRoute extends OutboundRoute
 
     protected const DEFAULT_VALUE_ENCLOSURE = '"';
 
-    public static function getIntegrationName(): string
+    public static function getDefaultIntegrationInfo(): IntegrationInfo
     {
-        return 'file';
-    }
-
-    public static function getIntegrationLabel(): ?string
-    {
-        return 'File';
-    }
-
-    public static function getOutboundRouteListLabel(): ?string
-    {
-        return 'File Routes';
+        return new IntegrationInfo('file', 'File', outboundRouteListLabel: 'File Routes');
     }
 
     public static function getLabel(): ?string
