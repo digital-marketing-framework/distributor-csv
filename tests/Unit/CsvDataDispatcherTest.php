@@ -16,7 +16,7 @@ class CsvDataDispatcherTest extends TestCase
      *
      * @param array<string,string|ValueInterface> $data
      */
-    public function testSendMethod(string|null $existingCsvContent = '', array $data = [], string $expectedCsvContent = ''): void
+    public function testSendMethod(?string $existingCsvContent = '', array $data = [], string $expectedCsvContent = ''): void
     {
         $registryMock = $this->getMockBuilder(Registry::class)->getMock();
 

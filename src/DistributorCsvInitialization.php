@@ -5,19 +5,19 @@ namespace DigitalMarketingFramework\Distributor\Csv;
 use DigitalMarketingFramework\Core\Initialization;
 use DigitalMarketingFramework\Core\Registry\RegistryDomain;
 use DigitalMarketingFramework\Distributor\Core\DataDispatcher\DataDispatcherInterface;
-use DigitalMarketingFramework\Distributor\Core\Route\RouteInterface;
+use DigitalMarketingFramework\Distributor\Core\Route\OutboundRouteInterface;
 use DigitalMarketingFramework\Distributor\Csv\DataDispatcher\CsvDataDispatcher;
-use DigitalMarketingFramework\Distributor\Csv\Route\CsvRoute;
+use DigitalMarketingFramework\Distributor\Csv\Route\CsvOutboundRoute;
 
 class DistributorCsvInitialization extends Initialization
 {
     protected const PLUGINS = [
         RegistryDomain::DISTRIBUTOR => [
             DataDispatcherInterface::class => [
-            CsvDataDispatcher::class,
+                CsvDataDispatcher::class,
             ],
-            RouteInterface::class => [
-                CsvRoute::class,
+            OutboundRouteInterface::class => [
+                CsvOutboundRoute::class,
             ],
         ],
     ];
