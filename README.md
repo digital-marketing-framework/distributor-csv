@@ -1,4 +1,4 @@
-# CSV Distributor for Mediatis Digital Marketing Framework
+# CSV Distributor for Mediatis Anyrel
 
 ## Introduction
 Save data by appending it to a CSV file.
@@ -10,6 +10,8 @@ delimiter: ;
 enclosure: "
 ```
 
-## Running unit tests:
-`composer install`
-`composer run-script test`
+## Running code quality checks and tests:
+```
+composer install
+composer ci
+```

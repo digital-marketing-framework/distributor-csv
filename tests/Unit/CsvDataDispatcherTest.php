@@ -1,21 +1,27 @@
 <?php
 
+namespace DigitalMarketingFramework\Distributor\Csv\Tests\Unit;
+
 use DigitalMarketingFramework\Core\FileStorage\FileStorageInterface;
 use DigitalMarketingFramework\Core\Model\Data\Value\ValueInterface;
 use DigitalMarketingFramework\Distributor\Core\Registry\Registry;
 use DigitalMarketingFramework\Distributor\Core\Tests\Integration\DistributorRegistryTestTrait;
 use DigitalMarketingFramework\Distributor\Csv\DataDispatcher\CsvDataDispatcher;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(CsvDataDispatcher::class)]
 class CsvDataDispatcherTest extends TestCase
 {
     use DistributorRegistryTestTrait;
 
     /**
-     * @dataProvider csvDataProvider
-     *
      * @param array<string,string|ValueInterface> $data
      */
+    #[Test]
+    #[DataProvider('csvDataProvider')]
     public function testSendMethod(?string $existingCsvContent = '', array $data = [], string $expectedCsvContent = ''): void
     {
         $registryMock = $this->getMockBuilder(Registry::class)->getMock();
@@ -46,7 +52,7 @@ class CsvDataDispatcherTest extends TestCase
     /**
      * @return array<mixed>
      */
-    public function csvDataProvider(): array
+    public static function csvDataProvider(): array
     {
         return [
             'Test when file doesnt exist, expect new CSV file with headers and data' => [null, ['Name' => 'John', 'Last Name' => 'Doe', 'Email' => 'johndoe@example.com'], "Name;Last Name;Email\nJohn;Doe;johndoe@example.com\n"],
