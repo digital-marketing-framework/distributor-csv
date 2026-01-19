@@ -59,13 +59,13 @@ class CsvDataDispatcher extends DataDispatcher implements CsvDataDispatcherInter
 
         $newData = [];
         foreach (array_keys($data) as $key) {
-            if (!in_array($key, $headers)) {
+            if (!in_array($key, $headers, true)) {
                 $headers[] = $key;
             }
         }
 
         foreach ($headers as $header) {
-            $newData[$header] = empty($data[$header]) ? '' : (string)$data[$header];
+            $newData[$header] = !isset($data[$header]) || $data[$header] === '' ? '' : (string)$data[$header];
         }
 
         $newHeader = $this->makeCsvLine($headers);
